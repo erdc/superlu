@@ -24,16 +24,18 @@ lib: superlulib tmglib
 
 clean: cleanlib cleantesting
 
-install:
-	( cd INSTALL; $(MAKE) )
-#	( cd INSTALL; cp lsame.c ../SRC/; \
-#	  cp dlamch.c ../SRC/; cp slamch.c ../SRC/ )
+install: superlulib
+	cp -f SRC/$(SUPERLULIB) $(PREFIX)/lib
+	cp -f SRC/*.h  $(PREFIX)/include
 
 blaslib:
 	( cd CBLAS; $(MAKE) )
 
 superlulib:
-	( cd SRC; $(MAKE) )
+	( cd SRC; $(MAKE) double)
+
+installpyadhlib:
+	cp -f SRC/$(SUPERLULIB) $(PYADH)/$(PYADH_ARCH)/lib
 
 tmglib:
 	( cd TESTING/MATGEN; $(MAKE) )
