@@ -217,8 +217,6 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 , <a class="el" href="slu__cdefs_8h.html#c7a85f8c55c71b4f4d454c4d62ffbfae">slu_cdefs.h</a>
 <li>clear_mark()
 : <a class="el" href="colamd_8c.html#7eb036c63565d8fc7c05e1074510601a">colamd.c</a>
-<li>CLK_TCK
-: <a class="el" href="superlu__timer_8c.html#03df76d1f70664d745ca8de2864e39b3">superlu_timer.c</a>
 <li>clsolve()
 : <a class="el" href="ccolumn__bmod_8c.html#39d81cbea11f613524e674a8c2e18c5f">ccolumn_bmod.c</a>
 , <a class="el" href="cgstrs_8c.html#39d81cbea11f613524e674a8c2e18c5f">cgstrs.c</a>
@@ -244,6 +242,7 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 , <a class="el" href="csp__blas2_8c.html#09be65495be35085027bc26454dc3e74">csp_blas2.c</a>
 <li>cmatvec_mult()
 : <a class="el" href="citersol_8c.html#d48f5fcdc4961220795817c195e2a411">citersol.c</a>
+, <a class="el" href="citersol1_8c.html#d48f5fcdc4961220795817c195e2a411">citersol1.c</a>
 <li>cmemory_usage()
 : <a class="el" href="cmemory_8c.html#43ff5010762c14ea7591d23cf48403a3">cmemory.c</a>
 , <a class="el" href="slu__cdefs_8h.html#cea36c2598bb3f8a27b6985634d2b8e9">slu_cdefs.h</a>
@@ -333,8 +332,8 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 : <a class="el" href="cmemory_8c.html#1e625ecaeb259e2dd79667ffbfb816c0">cmemory.c</a>
 , <a class="el" href="slu__cdefs_8h.html#f558e3813415369a8805c473a7eaa5e8">slu_cdefs.h</a>
 <li>complexMalloc()
-: <a class="el" href="slu__cdefs_8h.html#db98fa14a907e0e848a35e896d4040db">slu_cdefs.h</a>
-, <a class="el" href="cmemory_8c.html#0af029f557e5014a2d6797436b925f53">cmemory.c</a>
+: <a class="el" href="cmemory_8c.html#0af029f557e5014a2d6797436b925f53">cmemory.c</a>
+, <a class="el" href="slu__cdefs_8h.html#db98fa14a907e0e848a35e896d4040db">slu_cdefs.h</a>
 <li>CONJ
 : <a class="el" href="superlu__enum__consts_8h.html#0c4e17b2d5cea33f9991ccc6a6678d6226a53d2d0576982e73a770a90087a619">superlu_enum_consts.h</a>
 <li>copy_mem_complex()
@@ -346,16 +345,16 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 <li>copy_mem_float()
 : <a class="el" href="smemory_8c.html#00d00daa40d07c16e3ae6bfd87c70e3d">smemory.c</a>
 <li>copy_mem_int()
-: <a class="el" href="smemory_8c.html#b59eea34474da95fb3dc125400a1287e">smemory.c</a>
+: <a class="el" href="dmemory_8c.html#b59eea34474da95fb3dc125400a1287e">dmemory.c</a>
 , <a class="el" href="cmemory_8c.html#b59eea34474da95fb3dc125400a1287e">cmemory.c</a>
 , <a class="el" href="memory_8c.html#3b606bbd7cce73c19bffca851721e9ac">memory.c</a>
+, <a class="el" href="smemory_8c.html#b59eea34474da95fb3dc125400a1287e">smemory.c</a>
 , <a class="el" href="zmemory_8c.html#b59eea34474da95fb3dc125400a1287e">zmemory.c</a>
-, <a class="el" href="dmemory_8c.html#b59eea34474da95fb3dc125400a1287e">dmemory.c</a>
 <li>countnz()
-: <a class="el" href="slu__cdefs_8h.html#8086902aa8be3fc7d04c3c82ec3a79dc">slu_cdefs.h</a>
-, <a class="el" href="slu__zdefs_8h.html#8086902aa8be3fc7d04c3c82ec3a79dc">slu_zdefs.h</a>
+: <a class="el" href="slu__zdefs_8h.html#8086902aa8be3fc7d04c3c82ec3a79dc">slu_zdefs.h</a>
 , <a class="el" href="slu__ddefs_8h.html#8086902aa8be3fc7d04c3c82ec3a79dc">slu_ddefs.h</a>
 , <a class="el" href="slu__sdefs_8h.html#8086902aa8be3fc7d04c3c82ec3a79dc">slu_sdefs.h</a>
+, <a class="el" href="slu__cdefs_8h.html#8086902aa8be3fc7d04c3c82ec3a79dc">slu_cdefs.h</a>
 , <a class="el" href="util_8c.html#cac794ae60517b94cb755975b51b9538">util.c</a>
 <li>cpanel_bmod()
 : <a class="el" href="cpanel__bmod_8c.html#e38539c04b47f4c159e18684e435902b">cpanel_bmod.c</a>
@@ -376,14 +375,14 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 : <a class="el" href="cpivotL_8c.html#e6bc95a2710538cc5ce0904f90ef7f05">cpivotL.c</a>
 , <a class="el" href="slu__cdefs_8h.html#4a31e35e95f28f69549ffa45bebd4499">slu_cdefs.h</a>
 <li>cPrint_CompCol_Matrix()
-: <a class="el" href="cutil_8c.html#dbd15bf3edf77d21b1c4c5096dcacf7f">cutil.c</a>
-, <a class="el" href="slu__cdefs_8h.html#f091472c1fb3c085c384bf52b3bebd8d">slu_cdefs.h</a>
+: <a class="el" href="slu__cdefs_8h.html#f091472c1fb3c085c384bf52b3bebd8d">slu_cdefs.h</a>
+, <a class="el" href="cutil_8c.html#dbd15bf3edf77d21b1c4c5096dcacf7f">cutil.c</a>
 <li>cPrint_Dense_Matrix()
 : <a class="el" href="cutil_8c.html#069950e573473aa7fcf3739bcfac5983">cutil.c</a>
 , <a class="el" href="slu__cdefs_8h.html#1cbad8400b16c776b112f20b8645757d">slu_cdefs.h</a>
 <li>cprint_lu_col()
-: <a class="el" href="slu__cdefs_8h.html#4f43048c524cbdac07232ab635e67364">slu_cdefs.h</a>
-, <a class="el" href="cutil_8c.html#4fc78919cd6e7744cec4a8b32031d571">cutil.c</a>
+: <a class="el" href="cutil_8c.html#4fc78919cd6e7744cec4a8b32031d571">cutil.c</a>
+, <a class="el" href="slu__cdefs_8h.html#4f43048c524cbdac07232ab635e67364">slu_cdefs.h</a>
 <li>cprint_soln()
 : <a class="el" href="cgstrs_8c.html#e8df96516a8a07b44c8e82c6ae734ab6">cgstrs.c</a>
 <li>cPrint_SuperNode_Matrix()
@@ -392,42 +391,43 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 <li>cPrintPerf()
 : <a class="el" href="cutil_8c.html#84a1610e172fb59a0bc19a1dadcb9fbe">cutil.c</a>
 <li>cpruneL()
-: <a class="el" href="cpruneL_8c.html#a230bea3429693147cefbc58ce7b50d1">cpruneL.c</a>
-, <a class="el" href="slu__cdefs_8h.html#65d7df9e58c2415f455dbe6db9a99f2b">slu_cdefs.h</a>
+: <a class="el" href="slu__cdefs_8h.html#65d7df9e58c2415f455dbe6db9a99f2b">slu_cdefs.h</a>
+, <a class="el" href="cpruneL_8c.html#a230bea3429693147cefbc58ce7b50d1">cpruneL.c</a>
 <li>cpsolve()
 : <a class="el" href="citersol_8c.html#455d0df27a76044ba598ec4dccd0abfa">citersol.c</a>
+, <a class="el" href="citersol1_8c.html#455d0df27a76044ba598ec4dccd0abfa">citersol1.c</a>
 <li>cQuerySpace()
-: <a class="el" href="slu__cdefs_8h.html#7ac9ff71eef6bf8c52c41eb9209a0caf">slu_cdefs.h</a>
-, <a class="el" href="cmemory_8c.html#34d8cd030775d267947b68a4dacfbabb">cmemory.c</a>
+: <a class="el" href="cmemory_8c.html#34d8cd030775d267947b68a4dacfbabb">cmemory.c</a>
+, <a class="el" href="slu__cdefs_8h.html#7ac9ff71eef6bf8c52c41eb9209a0caf">slu_cdefs.h</a>
 <li>creadhb()
-: <a class="el" href="slu__cdefs_8h.html#34243c626347c973358d3d095802783b">slu_cdefs.h</a>
-, <a class="el" href="creadhb_8c.html#75118673183b533e85d3300b9d12e0b8">creadhb.c</a>
+: <a class="el" href="creadhb_8c.html#75118673183b533e85d3300b9d12e0b8">creadhb.c</a>
+, <a class="el" href="slu__cdefs_8h.html#34243c626347c973358d3d095802783b">slu_cdefs.h</a>
 <li>creadmt()
 : <a class="el" href="slu__cdefs_8h.html#88701835280a367a90b9ea2a73f946f0">slu_cdefs.h</a>
 <li>creadrb()
-: <a class="el" href="creadrb_8c.html#af2ecfdc506c8a67ac3356758edd5502">creadrb.c</a>
-, <a class="el" href="slu__cdefs_8h.html#0cce050053c795f6b9c52174008bf775">slu_cdefs.h</a>
+: <a class="el" href="slu__cdefs_8h.html#0cce050053c795f6b9c52174008bf775">slu_cdefs.h</a>
+, <a class="el" href="creadrb_8c.html#af2ecfdc506c8a67ac3356758edd5502">creadrb.c</a>
 <li>creadrhs()
 : <a class="el" href="creadtriple_8c.html#5daca19d6cd5379145d89f172703fa6b">creadtriple.c</a>
 <li>creadtriple()
-: <a class="el" href="slu__cdefs_8h.html#7c84a33df79e533f6167e4a1e9ce89cb">slu_cdefs.h</a>
-, <a class="el" href="creadtriple_8c.html#784a2e9d5ddef7abd1706abeb73ee498">creadtriple.c</a>
+: <a class="el" href="creadtriple_8c.html#784a2e9d5ddef7abd1706abeb73ee498">creadtriple.c</a>
+, <a class="el" href="slu__cdefs_8h.html#7c84a33df79e533f6167e4a1e9ce89cb">slu_cdefs.h</a>
 <li>cReadValues()
 : <a class="el" href="creadhb_8c.html#a8fcc9991808e214c9760aafa83ac02c">creadhb.c</a>
 , <a class="el" href="creadrb_8c.html#7737ab09a4d223433775e2566867ce8c">creadrb.c</a>
 <li>cs_mult
 : <a class="el" href="slu__scomplex_8h.html#a675d825b907fe4d939ddc2533b38bb8">slu_scomplex.h</a>
 <li>cSetRWork()
-: <a class="el" href="cmemory_8c.html#ff3d90f7f22f882faf8ba0dcf68b0f9c">cmemory.c</a>
-, <a class="el" href="slu__cdefs_8h.html#f3bbcd362fb260a0dba5488a3e4ee926">slu_cdefs.h</a>
+: <a class="el" href="slu__cdefs_8h.html#f3bbcd362fb260a0dba5488a3e4ee926">slu_cdefs.h</a>
+, <a class="el" href="cmemory_8c.html#ff3d90f7f22f882faf8ba0dcf68b0f9c">cmemory.c</a>
 <li>cSetupSpace()
 : <a class="el" href="cmemory_8c.html#c62dd03d1789ef6363db31ad2491ada9">cmemory.c</a>
 <li>csnode_bmod()
 : <a class="el" href="slu__cdefs_8h.html#ab1987caf36c8eedcf605b59e56a9d5d">slu_cdefs.h</a>
 , <a class="el" href="csnode__bmod_8c.html#b5d22385d602a4fe7b7955129fc54ac8">csnode_bmod.c</a>
 <li>csnode_dfs()
-: <a class="el" href="slu__cdefs_8h.html#c98da7d6b5809dadb1cae9bc019619ce">slu_cdefs.h</a>
-, <a class="el" href="csnode__dfs_8c.html#1c7b34abd214279177619773ad24b759">csnode_dfs.c</a>
+: <a class="el" href="csnode__dfs_8c.html#1c7b34abd214279177619773ad24b759">csnode_dfs.c</a>
+, <a class="el" href="slu__cdefs_8h.html#c98da7d6b5809dadb1cae9bc019619ce">slu_cdefs.h</a>
 <li>cStackCompress()
 : <a class="el" href="cmemory_8c.html#98ec5775d491718006688922903496ae">cmemory.c</a>
 <li>cswap_()
@@ -437,18 +437,18 @@ Here is a list of all functions, variables, defines, enums, and typedefs with li
 <li>cuser_malloc()
 : <a class="el" href="cmemory_8c.html#fdfe5f4689b0aaedf46d034809711754">cmemory.c</a>
 <li>cusolve()
-: <a class="el" href="cgstrs_8c.html#34580dfcbd886fe93845353ac7dbeaa1">cgstrs.c</a>
-, <a class="el" href="cmyblas2_8c.html#7eca4ad25e05a68037a682483f9786f1">cmyblas2.c</a>
+: <a class="el" href="ccolumn__bmod_8c.html#34580dfcbd886fe93845353ac7dbeaa1">ccolumn_bmod.c</a>
+, <a class="el" href="cgstrs_8c.html#34580dfcbd886fe93845353ac7dbeaa1">cgstrs.c</a>
 , <a class="el" href="csp__blas2_8c.html#34580dfcbd886fe93845353ac7dbeaa1">csp_blas2.c</a>
-, <a class="el" href="ccolumn__bmod_8c.html#34580dfcbd886fe93845353ac7dbeaa1">ccolumn_bmod.c</a>
+, <a class="el" href="cmyblas2_8c.html#7eca4ad25e05a68037a682483f9786f1">cmyblas2.c</a>
 <li>CX
-: <a class="el" href="icmax1_8c.html#5a76da95c549c41790389a76e12fdcb5">icmax1.c</a>
+: <a class="el" href="scsum1_8c.html#5a76da95c549c41790389a76e12fdcb5">scsum1.c</a>
 , <a class="el" href="izmax1_8c.html#5a76da95c549c41790389a76e12fdcb5">izmax1.c</a>
-, <a class="el" href="scsum1_8c.html#5a76da95c549c41790389a76e12fdcb5">scsum1.c</a>
 , <a class="el" href="dzsum1_8c.html#5a76da95c549c41790389a76e12fdcb5">dzsum1.c</a>
+, <a class="el" href="icmax1_8c.html#5a76da95c549c41790389a76e12fdcb5">icmax1.c</a>
 </ul>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Nov 22 10:23:48 2010 for SuperLU by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 25 13:43:50 2011 for SuperLU by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.5 </small></address>
 </body>

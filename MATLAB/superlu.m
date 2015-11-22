@@ -109,6 +109,18 @@ prow(prowInv) = 1:n;
 pcol = zeros(1,n);
 pcol(pcolInv) = 1:n;
 
+% -- Added 12/14/2011 --
+% The row indices of L & U matrices are not sorted from SuperLU, but 
+% Matlab requires the matrices to be sorted.
+% Now, we do double-transpose to achieve sorting. This acts like bucket sort,
+% should be faster than find / sparse combination, which probably uses
+% quicksort.
+% [i,j,s] = find(L); L = sparse(i,j,s,m,n);
+
+L1 = L'; L = L1';
+U1 = U'; U = U1';
+% ----
+
 % We now have
 %
 %    Prow*A*Psparse'*Post' = L*U   (1)

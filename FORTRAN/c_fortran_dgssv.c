@@ -12,7 +12,7 @@
 #define HANDLE_SIZE  8
 /* kind of integer to hold a pointer.  Use int.
    This might need to be changed on 64-bit systems. */
-typedef long long fptr;  /* 64-bit by default */
+typedef int fptr;  /* 32-bit by default */
 
 typedef struct {
     SuperMatrix *L;

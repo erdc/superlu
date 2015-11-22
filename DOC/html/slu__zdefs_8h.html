@@ -3178,7 +3178,9 @@ Copies a two-dimensional matrix X to another matrix Y.
             off-diagonal entries of modulus at most 1. P is a permutation
             obtained from MC64.
             If MC64 fails, <a class="el" href="slu__zdefs_8h.html#e112ddfff2798b7e4c090d96d2a8d80a" title="Driver related.">zgsequ()</a> is used to equilibrate the system,
-            and A is scaled as above, there is no permutation involved.</pre><p>
+            and A is scaled as above, but no permutation is involved.
+            On exit, A is restored to the orginal row numbering, so
+            Dr*A*Dc is returned.</pre><p>
 <pre> perm_c  (input/output) int*
 	   If A-&gt;Stype = SLU_NC, Column permutation vector of size A-&gt;ncol,
 	   which defines the permutation matrix Pc; perm_c[i] = j means
@@ -3193,8 +3195,8 @@ Copies a two-dimensional matrix X to another matrix Y.
 <pre> perm_r  (input/output) int*
 	   If A-&gt;Stype = SLU_NC, row permutation vector of size A-&gt;nrow, 
 	   which defines the permutation matrix Pr, and is determined
-	   by partial pivoting.  perm_r[i] = j means row i of A is in 
-	   position j in Pr*A.</pre><p>
+	   by MC64 first then followed by partial pivoting.
+         perm_r[i] = j means row i of A is in position j in Pr*A.</pre><p>
 <pre>	   If A-&gt;Stype = SLU_NR, permutation vector of size A-&gt;ncol, which
 	   determines permutation of rows of transpose(A)
 	   (columns of A) as described above.</pre><p>
@@ -3226,7 +3228,7 @@ Copies a two-dimensional matrix X to another matrix Y.
 	   If equed = 'N' or 'C', R is not accessed.
 	   If options-&gt;Fact = FACTORED, R is an input argument,
 	       otherwise, R is output.
-	   If options-&gt;zFact = FACTORED and equed = 'R' or 'B', each element
+	   If options-&gt;Fact = FACTORED and equed = 'R' or 'B', each element
 	       of R must be positive.</pre><p>
 <pre> C	   (input/output) double*, dimension (A-&gt;ncol)
 	   The column scale factors for A or transpose(A).
@@ -3279,10 +3281,6 @@ Copies a two-dimensional matrix X to another matrix Y.
 		    B is overwritten by diag(C)*B;
 		 if options-&gt;Trans = TRANS or CONJ and equed = 'R' of 'B',
 		    B is overwritten by diag(R)*B.</pre><p>
-<pre>         If options-&gt;RowPerm = LargeDiag, MC64 is used to scale and permute
-            the matrix A to an I-matrix. Then, in addition to the scaling
-            above, B is further permuted by P*B if options-&gt;Trans = NOTRANS,
-            where P is obtained from MC64.</pre><p>
 <pre> X	   (output) SuperMatrix*
 	   X has types: Stype = SLU_DN, Dtype = SLU_Z, Mtype = SLU_GE.
 	   If info = 0 or info = A-&gt;ncol+1, X contains the solution matrix
@@ -6065,7 +6063,7 @@ Memory-related.<p>
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Mon Nov 22 10:23:48 2010 for SuperLU by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu Aug 25 13:43:50 2011 for SuperLU by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.5 </small></address>
 </body>

@@ -20,7 +20,7 @@ typedef enum {NATURAL, MMD_ATA, MMD_AT_PLUS_A, COLAMD,
 	      METIS_AT_PLUS_A, PARMETIS, ZOLTAN, MY_PERMC}      colperm_t;
 typedef enum {NOTRANS, TRANS, CONJ}                             trans_t;
 typedef enum {NOEQUIL, ROW, COL, BOTH}                          DiagScale_t;
-typedef enum {NOREFINE, SINGLE=1, DOUBLE, EXTRA}                IterRefine_t;
+typedef enum {NOREFINE, SLU_SINGLE=1, SLU_DOUBLE, SLU_EXTRA}    IterRefine_t;
 typedef enum {LUSUP, UCOL, LSUB, USUB, LLVL, ULVL}              MemType;
 typedef enum {HEAD, TAIL}                                       stack_end_t;
 typedef enum {SYSTEM, USER}                                     LU_space_t;
@@ -61,7 +61,6 @@ typedef enum {
     RCOND,   /* estimate reciprocal condition number */
     SOLVE,   /* forward and back solves */
     REFINE,  /* perform iterative refinement */
-    FLOAT,   /* time spent in floating-point operations */
     TRSV,    /* fraction of FACT spent in xTRSV */
     GEMV,    /* fraction of FACT spent in xGEMV */
     FERR,    /* estimate error bounds after iterative refinement */

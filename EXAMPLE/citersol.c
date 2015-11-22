@@ -1,39 +1,78 @@
 
-#include "slu_cdefs.h"
-/*
- * -- SuperLU routine (version 4.1) --
+/*! @file citersol.c
+ * \brief Example #1 showing how to use ILU to precondition GMRES
+ *
+ * <pre>
+ * -- SuperLU routine (version 4.2) --
  * Lawrence Berkeley National Laboratory
  * November, 2010
+ * August, 2011
+ *
+ * This example shows that ILU is computed from the equilibrated matrix,
+ * and the preconditioned GMRES is applied to the equilibrated system.
+ * The driver routine CGSISX is called twice to perform factorization
+ * and apply preconditioner separately.
+ * 
+ * Note that CGSISX performs the following factorization:
+ *     Pr*Dr*A*Dc*Pc^T ~= LU
+ * with Pr being obtained from MC64 statically then partial pivoting
+ * dybamically. On return, A is overwritten as A1 = Dr*A*Dc.
+ *
+ * We can solve the transformed system, A1*y = Dr*B, using FGMRES.
+ * B is first overwritten as Dr*B.
+ * Then GMRES step requires requires 2 procedures:
+ *   1) Apply preconditioner M^{-1} = Pc^T*U^{-1}*L^{-1}*Pr
+ *   2) Matrix-vector multiplication: w = A1*v
+ * 
+ * </pre>
  */
 
+#include "slu_cdefs.h"
+
+superlu_options_t *GLOBAL_OPTIONS;
+float *GLOBAL_R, *GLOBAL_C;
 int *GLOBAL_PERM_C, *GLOBAL_PERM_R;
 SuperMatrix *GLOBAL_A, *GLOBAL_L, *GLOBAL_U;
 SuperLUStat_t *GLOBAL_STAT;
+mem_usage_t   *GLOBAL_MEM_USAGE;
+
+void cpsolve(int n,
+                  complex x[], /* solution */
+                  complex y[]  /* right-hand side */
+)
+{
+    SuperMatrix *A = GLOBAL_A, *L = GLOBAL_L, *U = GLOBAL_U;
+    SuperLUStat_t *stat = GLOBAL_STAT;
+    int *perm_c = GLOBAL_PERM_C, *perm_r = GLOBAL_PERM_R;
+    char equed[1] = {'N'};
+    float *R = GLOBAL_R, *C = GLOBAL_C;
+    superlu_options_t *options = GLOBAL_OPTIONS;
+    mem_usage_t  *mem_usage = GLOBAL_MEM_USAGE;
+    int info;
+    static DNformat X, Y;
+    static SuperMatrix XX = {SLU_DN, SLU_C, SLU_GE, 1, 1, &X};
+    static SuperMatrix YY = {SLU_DN, SLU_C, SLU_GE, 1, 1, &Y};
+    float rpg, rcond;
+
+    XX.nrow = YY.nrow = n;
+    X.lda = Y.lda = n;
+    X.nzval = x;
+    Y.nzval = y;
+
+#if 0
+    dcopy_(&n, y, &i_1, x, &i_1);
+    cgstrs(NOTRANS, L, U, perm_c, perm_r, &XX, stat, &info);
+#else
+    cgsisx(options, A, perm_c, perm_r, NULL, equed, R, C,
+	   L, U, NULL, 0, &YY, &XX, &rpg, &rcond, mem_usage, stat, &info);
+#endif
+}
 
 void cmatvec_mult(complex alpha, complex x[], complex beta, complex y[])
 {
     SuperMatrix *A = GLOBAL_A;
 
     sp_cgemv("N", alpha, A, x, 1, beta, y, 1);
-}
-
-void cpsolve(int n, complex x[], complex y[])
-{
-    extern void ccopy_(int *, complex [], int *, complex [], int *);
-
-    int i_1 = 1;
-    SuperMatrix *L = GLOBAL_L, *U = GLOBAL_U;
-    SuperLUStat_t *stat = GLOBAL_STAT;
-    int *perm_c = GLOBAL_PERM_C, *perm_r = GLOBAL_PERM_R;
-    int info;
-    static DNformat X;
-    static SuperMatrix XX = {SLU_DN, SLU_C, SLU_GE, 1, 1, &X};
-
-    ccopy_(&n, y, &i_1, x, &i_1);
-    XX.nrow = n;
-    X.lda = n;
-    X.nzval = x;
-    cgstrs(NOTRANS, L, U, perm_c, perm_r, &XX, stat, &info);
 }
 
 int main(int argc, char *argv[])
@@ -87,8 +126,6 @@ int main(int argc, char *argv[])
     /* Defaults */
     lwork = 0;
     nrhs  = 1;
-    equil = YES;
-    u	  = 0.1; /* u=1.0 for complete factorization */
     trans = NOTRANS;
 
     /* Set the default input options:
@@ -156,12 +193,14 @@ int main(int argc, char *argv[])
 	}
     }
 
-    cCreate_CompCol_Matrix(&A, m, n, nnz, a, asub, xa, SLU_NC, SLU_C, SLU_GE);
+    cCreate_CompCol_Matrix(&A, m, n, nnz, a, asub, xa,
+                                SLU_NC, SLU_C, SLU_GE);
     Astore = A.Store;
     cfill_diag(n, Astore);
     printf("Dimension %dx%d; # nonzeros %d\n", A.nrow, A.ncol, Astore->nnz);
     fflush(stdout);
 
+    /* Generate the right-hand side */
     if ( !(rhsb = complexMalloc(m * nrhs)) ) ABORT("Malloc fails for rhsb[].");
     if ( !(rhsx = complexMalloc(m * nrhs)) ) ABORT("Malloc fails for rhsx[].");
     cCreate_Dense_Matrix(&B, m, nrhs, rhsb, m, SLU_DN, SLU_C, SLU_GE);
@@ -190,25 +229,33 @@ int main(int argc, char *argv[])
 
     /* Compute the incomplete factorization and compute the condition number
        and pivot growth using dgsisx. */
+    B.ncol = 0;  /* not to perform triangular solution */
     cgsisx(&options, &A, perm_c, perm_r, etree, equed, R, C, &L, &U, work,
 	   lwork, &B, &X, &rpg, &rcond, &mem_usage, &stat, &info);
 
-    Lstore = (SCformat *) L.Store;
-    Ustore = (NCformat *) U.Store;
-    printf("cgsisx(): info %d\n", info);
+    /* Set RHS for GMRES. */
+    if (!(b = complexMalloc(m))) ABORT("Malloc fails for b[].");
+    if (*equed == 'R' || *equed == 'B') {
+	for (i = 0; i < n; ++i) cs_mult(&b[i], &rhsb[i], R[i]);
+    } else {
+	for (i = 0; i < m; i++) b[i] = rhsb[i];
+    }
+
+    printf("cgsisx(): info %d, equed %c\n", info, equed[0]);
     if (info > 0 || rcond < 1e-8 || rpg > 1e8)
 	printf("WARNING: This preconditioner might be unstable.\n");
 
     if ( info == 0 || info == n+1 ) {
-
 	if ( options.PivotGrowth == YES )
 	    printf("Recip. pivot growth = %e\n", rpg);
 	if ( options.ConditionNumber == YES )
 	    printf("Recip. condition number = %e\n", rcond);
-
     } else if ( info > 0 && lwork == -1 ) {
 	printf("** Estimated memory: %d bytes\n", info - n);
     }
+
+    Lstore = (SCformat *) L.Store;
+    Ustore = (NCformat *) U.Store;
     printf("n(A) = %d, nnz(A) = %d\n", n, Astore->nnz);
     printf("No of nonzeros in factor L = %d\n", Lstore->nnz);
     printf("No of nonzeros in factor U = %d\n", Ustore->nnz);
@@ -227,13 +274,21 @@ int main(int argc, char *argv[])
     GLOBAL_STAT = &stat;
     GLOBAL_PERM_C = perm_c;
     GLOBAL_PERM_R = perm_r;
+    GLOBAL_OPTIONS = &options;
+    GLOBAL_R = R;
+    GLOBAL_C = C;
+    GLOBAL_MEM_USAGE = &mem_usage;
+
+    /* Set the options to do solve-only. */
+    options.Fact = FACTORED;
+    options.PivotGrowth = NO;
+    options.ConditionNumber = NO;
 
     /* Set the variables used by GMRES. */
     restrt = SUPERLU_MIN(n / 3 + 1, 50);
     maxit = 1000;
     iter = maxit;
     resid = 1e-8;
-    if (!(b = complexMalloc(m))) ABORT("Malloc fails for b[].");
     if (!(x = complexMalloc(n))) ABORT("Malloc fails for x[].");
 
     if (info <= n + 1)
@@ -244,12 +299,12 @@ int main(int argc, char *argv[])
 	extern float scnrm2_(int *, complex [], int *);
 	extern void caxpy_(int *, complex *, complex [], int *, complex [], int *);
 
-	/* Call GMRES. */
-	for (i = 0; i < n; i++) b[i] = rhsb[i];
+	/* Initial guess */
 	for (i = 0; i < n; i++) x[i] = zero;
 
 	t = SuperLU_timer_();
 
+	/* Call GMRES */
 	cfgmr(n, cmatvec_mult, cpsolve, b, x, resid, restrt, &iter, stdout);
 
 	t = SuperLU_timer_() - t;

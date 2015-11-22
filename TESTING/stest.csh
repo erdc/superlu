@@ -6,7 +6,7 @@ if ( -e $ofile ) then
 endif
 echo "Single-precision testing output" > $ofile
 
-set MATRICES     = (LAPACK g10)
+set MATRICES     = (LAPACK g20.rua)
 set NVAL         = (9 19)
 set NRHS         = (5)
 set LWORK        = (0 10000000)

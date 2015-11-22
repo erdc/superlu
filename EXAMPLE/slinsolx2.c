@@ -8,7 +8,7 @@
  */
 #include "slu_sdefs.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 /*
  * Purpose

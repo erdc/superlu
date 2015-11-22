@@ -6,7 +6,7 @@ void mysub(int n, double *x, double *y)
     return;
 }
 
-main()
+int main()
 {
     /* Parameters */    
 #define NMAX    1000

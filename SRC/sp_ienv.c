@@ -1,6 +1,5 @@
 /*! @file sp_ienv.c
- * \brief Chooses machine-dependent parameters for the local
- * environment.
+ * \brief Chooses machine-dependent parameters for the local environment.
  *
  * <pre>
  * -- SuperLU routine (version 4.1) --

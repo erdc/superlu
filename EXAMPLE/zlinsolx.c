@@ -8,7 +8,7 @@
  */
 #include "slu_zdefs.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     char           equed[1];
     yes_no_t       equil;
@@ -69,7 +69,7 @@ main(int argc, char *argv[])
     /* Add more functionalities that the defaults. */
     options.PivotGrowth = YES;    /* Compute reciprocal pivot growth */
     options.ConditionNumber = YES;/* Compute reciprocal condition number */
-    options.IterRefine = DOUBLE;  /* Perform double-precision refinement */
+    options.IterRefine = SLU_DOUBLE;  /* Perform double-precision refinement */
     
     if ( lwork > 0 ) {
 	work = SUPERLU_MALLOC(lwork);

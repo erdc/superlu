@@ -1,17 +1,18 @@
 /*
- * -- SuperLU routine (version 3.0) --
+ * -- SuperLU routine (version 4.2) --
  * Univ. of California Berkeley, Xerox Palo Alto Research Center,
  * and Lawrence Berkeley National Lab.
  * October 15, 2003
  *
+ * Modified: September 25, 2011,  compatible with 64-bit integer in R2006b
  */
 #include <stdio.h>
 #include "mex.h"
 #include "slu_ddefs.h"
 
-#ifdef V5
 #define  MatlabMatrix mxArray
-#else    /* V4 */
+
+#if 0   /* V4 */
 #define  MatlabMatrix Matrix
 #endif
 
@@ -30,19 +31,14 @@ void mexFunction(
     int          nlhs,           /* number of expected outputs */
     MatlabMatrix *plhs[],        /* matrix pointer array returning outputs */
     int          nrhs,           /* number of inputs */
-#ifdef V5
     const MatlabMatrix *prhs[]   /* matrix pointer array for inputs. */
-#else /* V4 */
+#if 0 /* V4 */
     MatlabMatrix *prhs[]         /* matrix pointer array for inputs */
 #endif
     )
 {
     int SPUMONI;             /* ... as should the sparse monitor flag */
-#ifdef V5
     double FlopsInSuperLU;   /* ... as should the flop counter. */
-#else /* V4 */
-    Real FlopsInSuperLU;     /* ... as should the flop counter */
-#endif
     extern flops_t LUFactFlops(SuperLUStat_t*);
     extern flops_t LUSolveFlops(SuperLUStat_t*);
     
@@ -57,6 +53,9 @@ void mexFunction(
     int       	*rowind;
     int		*colptr;
     int    	*perm_r, *perm_c;
+    mwSize      *perm_c_64;
+    mwSize      *rowind_64;
+    mwSize      *colptr_64;
     int		info;
     MatlabMatrix *X, *Y;            /* args to calls back to Matlab */
     int         i, mexerr;
@@ -74,10 +73,9 @@ void mexFunction(
     X = mxCreateString("spumoni");
     mexerr = mexCallMATLAB(1, &Y, 1, &X, "sparsfun");
     SPUMONI = mxGetScalar(Y);
-#ifdef V5
     mxDestroyArray(Y);
     mxDestroyArray(X);
-#else
+#if 0 /* V4 */
     mxFreeMatrix(Y);
     mxFreeMatrix(X);
 #endif
@@ -87,19 +85,26 @@ void mexFunction(
     numrhs = mxGetN(b_in);
     if ( babble ) printf("m=%d, n=%d, numrhs=%d\n", m, n, numrhs);
     vb = mxGetPr(b_in);
-#ifdef V5
     x_out = mxCreateDoubleMatrix(m, numrhs, mxREAL);
-#else
-    x_out = mxCreateFull(m, numrhs, REAL);
-#endif
-    x = mxGetPr(x_out);
-    perm_r = (int *) mxCalloc(m, sizeof(int));
-    perm_c = mxGetIr(Pc_in); 
 
+    x = mxGetPr(x_out);
     val = mxGetPr(A_in);
-    rowind = mxGetIr(A_in);
-    colptr = mxGetJc(A_in);
-    nnz = colptr[n];
+    rowind_64 = mxGetIr(A_in);
+    colptr_64 = mxGetJc(A_in);
+    perm_c_64 = mxGetIr(Pc_in); 
+    nnz = colptr_64[n];
+    perm_r = (int *) mxCalloc(m, sizeof(int));
+    perm_c = (int *) mxMalloc(n * sizeof(int));
+    rowind = (int *) mxMalloc(nnz * sizeof(int));
+    colptr = (int *) mxMalloc((n+1) * sizeof(int));
+    for (i = 0; i < n; ++i) {
+	perm_c[i] = perm_c_64[i];
+	colptr[i] = colptr_64[i];
+	/*printf("perm_c[%d] %d\n", i, perm_c[i]);*/
+    }
+    colptr[n] = colptr_64[n];
+    for (i = 0; i < nnz; ++i) rowind[i] = rowind_64[i];
+
     dCreate_CompCol_Matrix(&A, m, n, nnz, val, rowind, colptr,
 			   SLU_NC, SLU_D, SLU_GE);
     dCopy_Dense_Matrix(m, numrhs, vb, m, x, m);
@@ -123,13 +128,8 @@ void mexFunction(
     mexerr = mexCallMATLAB(1, &X, 0, NULL, "flops");
     *(mxGetPr(X)) += FlopsInSuperLU;
     mexerr = mexCallMATLAB(1, &Y, 1, &X, "flops");
-#ifdef V5
     mxDestroyArray(Y);
     mxDestroyArray(X);
-#else
-    mxFreeMatrix(Y);
-    mxFreeMatrix(X);
-#endif
 #endif
 
     /* Construct Matlab solution matrix. */
@@ -138,10 +138,14 @@ void mexFunction(
         Destroy_CompCol_Matrix(&U);
         if ( babble ) printf("Destroy L & U from SuperLU...\n");
     } else {
+        printf("dgssv info = %d\n", info);
 	mexErrMsgTxt("Error returned from C dgssv().");
     }
 
     mxFree(perm_r);
+    mxFree(perm_c);
+    mxFree(rowind);
+    mxFree(colptr);
     StatFree(&stat);
 
     return;

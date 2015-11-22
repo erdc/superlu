@@ -21,8 +21,8 @@ PLAT = _Altix
 #
 #  The name of the libraries to be created/linked to
 #
-SuperLUroot	= $(HOME)/Codes/SuperLU_4.1
-SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu_4.1.a
+SuperLUroot	= $(HOME)/Codes/SuperLU_4.3
+SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu_4.3.a
 
 BLASDEF	     = -DUSE_VENDOR_BLAS
 #BLASLIB      = -L/usr/common/intel/mkl/8.1.014/lib/64 \
@@ -45,7 +45,7 @@ CFLAGS       = $(ISA) -O3
 NOOPTS	     = $(ISA) -O0
 FORTRAN	     = ifort
 FFLAGS       = -ftz -mp -O3
-LOADER       = ifort
+LOADER       = ${CC}
 LOADOPTS     = $(ISA)
 
 #

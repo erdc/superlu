@@ -8,7 +8,7 @@
  */
 #include "slu_ddefs.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     SuperMatrix A;
     NCformat *Astore;
@@ -50,45 +50,8 @@ main(int argc, char *argv[])
     options.ColPerm = MMD_AT_PLUS_A;
     options.DiagPivotThresh = 0.001;
 
-#if 1
-    /* Read matrix A from a file in Harwell-Boeing format.*/
-    if (argc < 2)
-    {
-	printf("Usage:\n%s [OPTION] < [INPUT] > [OUTPUT]\nOPTION:\n"
-		"-h -hb:\n\t[INPUT] is a Harwell-Boeing format matrix.\n"
-		"-r -rb:\n\t[INPUT] is a Rutherford-Boeing format matrix.\n"
-		"-t -triplet:\n\t[INPUT] is a triplet format matrix.\n",
-		argv[0]);
-	return 0;
-    }
-    else
-    {
-	switch (argv[1][1])
-	{
-	    case 'H':
-	    case 'h':
-		printf("Input a Harwell-Boeing format matrix:\n");
-		dreadhb(&m, &n, &nnz, &a, &asub, &xa);
-		break;
-	    case 'R':
-	    case 'r':
-		printf("Input a Rutherford-Boeing format matrix:\n");
-		dreadrb(&m, &n, &nnz, &a, &asub, &xa);
-		break;
-	    case 'T':
-	    case 't':
-		printf("Input a triplet format matrix:\n");
-		dreadtriple(&m, &n, &nnz, &a, &asub, &xa);
-		break;
-	    default:
-		printf("Unrecognized format.\n");
-		return 0;
-	}
-    }
-#else
     /* Read the matrix in Harwell-Boeing format. */
     dreadhb(&m, &n, &nnz, &a, &asub, &xa);
-#endif
 
     dCreate_CompCol_Matrix(&A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
     Astore = A.Store;

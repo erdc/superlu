@@ -91,7 +91,7 @@ cldperm(int_t job, int_t n, int_t nnz, int_t colptr[], int_t adjncy[],
     double *nzval_d = (double *) SUPERLU_MALLOC(nnz * sizeof(double));
 
 #if ( DEBUGlevel>=1 )
-    CHECK_MALLOC(0, "Enter cldperm()");
+    CHECK_MALLOC("Enter cldperm()");
 #endif
     liw = 5*n;
     if ( job == 3 ) liw = 10*n + nnz;
@@ -161,7 +161,7 @@ cldperm(int_t job, int_t n, int_t nnz, int_t colptr[], int_t adjncy[],
     SUPERLU_FREE(nzval_d);
 
 #if ( DEBUGlevel>=1 )
-    CHECK_MALLOC(0, "Exit cldperm()");
+    CHECK_MALLOC("Exit cldperm()");
 #endif
 
     return info[0];

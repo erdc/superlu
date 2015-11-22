@@ -3,8 +3,8 @@ include ../make.inc
 LUSRC   = ../SRC
 HEADER	= -I$(LUSRC) -I$(MATLAB)/extern/include 
 #
-# For Matlab Version 4 compatibility: comment out -DV5, add -V4 in FFLAGS
-FLAGS   = -O -DV5
+# For Matlab Version 4 compatibility: comment out -DV5, add -V4 in FLAGS
+FLAGS   = -O -largeArrayDims
 
 all:            mexlusolve mexsuperlu
 

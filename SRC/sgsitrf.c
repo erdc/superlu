@@ -1,11 +1,12 @@
 
-/*! @file sgsitf.c
+/*! @file sgsitrf.c
  * \brief Computes an ILU factorization of a general sparse matrix
  *
  * <pre>
  * -- SuperLU routine (version 4.1) --
  * Lawrence Berkeley National Laboratory.
  * June 30, 2009
+ *
  * </pre>
  */
 

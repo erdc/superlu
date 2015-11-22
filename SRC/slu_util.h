@@ -167,9 +167,9 @@ typedef unsigned char Logical;
  * IterRefine (IterRefine_t)
  *        Specifies whether to perform iterative refinement.
  *        = NO: no iterative refinement
- *        = SINGLE: perform iterative refinement in single precision
- *        = DOUBLE: perform iterative refinement in double precision
- *        = EXTRA: perform iterative refinement in extra precision
+ *        = SLU_SINGLE: perform iterative refinement in single precision
+ *        = SLU_DOUBLE: perform iterative refinement in double precision
+ *        = SLU_EXTRA: perform iterative refinement in extra precision
  *
  * DiagPivotThresh (double, in [0.0, 1.0]) (only for sequential SuperLU)
  *        Specifies the threshold used for a diagonal entry to be an
@@ -272,6 +272,11 @@ typedef struct {
     yes_no_t      SolveInitialized;
     yes_no_t      RefineInitialized;
     yes_no_t      PrintStat;
+    int           nnzL, nnzU;      /* used to store nnzs for now       */
+    int           num_lookaheads;  /* num of levels in look-ahead      */
+    yes_no_t      lookahead_etree; /* use etree computed from the
+				      serial symbolic factorization */
+    yes_no_t      SymPattern;      /* symmetric factorization          */
 } superlu_options_t;
 
 /*! \brief Headers for 4 types of dynamatically managed memory */

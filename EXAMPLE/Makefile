@@ -40,6 +40,7 @@ SLINXEXM 	= slinsolx.o
 SLINXEXM1 	= slinsolx1.o
 SLINXEXM2	= slinsolx2.o
 SITSOL	     	= sitersol.o sfgmr.o
+SITSOL1	     	= sitersol1.o sfgmr.o
 
 DLINEXM		= dlinsol.o
 DLINEXM1	= dlinsol1.o
@@ -48,6 +49,7 @@ DLINXEXM1 	= dlinsolx1.o
 DLINXEXM2 	= dlinsolx2.o
 SUPERLUEXM 	= superlu.o sp_ienv.o
 DITSOL	     	= ditersol.o dfgmr.o
+DITSOL1	     	= ditersol1.o dfgmr.o
 
 CLINEXM 	= clinsol.o
 CLINEXM1 	= clinsol1.o
@@ -55,6 +57,7 @@ CLINXEXM 	= clinsolx.o
 CLINXEXM1 	= clinsolx1.o
 CLINXEXM2 	= clinsolx2.o
 CITSOL	     	= citersol.o cfgmr.o
+CITSOL1	     	= citersol1.o cfgmr.o
 
 ZLINEXM 	= zlinsol.o
 ZLINEXM1 	= zlinsol1.o
@@ -62,14 +65,16 @@ ZLINXEXM 	= zlinsolx.o
 ZLINXEXM1 	= zlinsolx1.o
 ZLINXEXM2 	= zlinsolx2.o
 ZITSOL	     	= zitersol.o zfgmr.o
+ZITSOL1	     	= zitersol1.o zfgmr.o
 
 
 all:    single double complex complex16
 
-single:    slinsol slinsol1 slinsolx slinsolx1 slinsolx2 sitersol
-double:    dlinsol dlinsol1 dlinsolx dlinsolx1 dlinsolx2 superlu ditersol
-complex:   clinsol clinsol1 clinsolx clinsolx1 clinsolx2 citersol
-complex16: zlinsol zlinsol1 zlinsolx zlinsolx1 zlinsolx2 zitersol
+single:    slinsol slinsol1 slinsolx slinsolx1 slinsolx2 sitersol sitersol1
+double:    dlinsol dlinsol1 dlinsolx dlinsolx1 dlinsolx2 superlu \
+		ditersol ditersol1
+complex:   clinsol clinsol1 clinsolx clinsolx1 clinsolx2 citersol citersol1
+complex16: zlinsol zlinsol1 zlinsolx zlinsolx1 zlinsolx2 zitersol zitersol1
 
 slinsol: $(SLINEXM) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(SLINEXM) $(LIBS) -lm -o $@
@@ -88,6 +93,9 @@ slinsolx2: $(SLINXEXM2) $(SUPERLULIB)
 
 sitersol: $(SITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(SITSOL) $(LIBS) -lm -o $@
+
+sitersol1: $(SITSOL1) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(SITSOL1) $(LIBS) -lm -o $@
 
 dlinsol: $(DLINEXM) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(DLINEXM) $(LIBS) -lm -o $@
@@ -110,6 +118,9 @@ superlu: $(SUPERLUEXM) $(SUPERLULIB)
 ditersol: $(DITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(DITSOL) $(LIBS) -lm -o $@
 
+ditersol1: $(DITSOL1) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(DITSOL1) $(LIBS) -lm -o $@
+
 clinsol: $(CLINEXM) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(CLINEXM) $(LIBS) -lm -o $@
 
@@ -128,6 +139,9 @@ clinsolx2: $(CLINXEXM2) $(SUPERLULIB)
 citersol: $(CITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(CITSOL) $(LIBS) -lm -o $@
 
+citersol1: $(CITSOL1) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(CITSOL1) $(LIBS) -lm -o $@
+
 zlinsol: $(ZLINEXM) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(ZLINEXM) $(LIBS) -lm -o $@
 
@@ -145,6 +159,9 @@ zlinsolx2: $(ZLINXEXM2) $(SUPERLULIB)
 
 zitersol: $(ZITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(ZITSOL) $(LIBS) -lm -o $@
+
+zitersol1: $(ZITSOL1) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(ZITSOL1) $(LIBS) -lm -o $@
 
 .c.o:
 	$(CC) $(CFLAGS) $(CDEFS) -I$(HEADER) -c $< $(VERBOSE)

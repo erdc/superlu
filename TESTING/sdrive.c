@@ -138,7 +138,7 @@ main(int argc, char *argv[])
     options.PrintStat = NO;
     options.PivotGrowth = YES;
     options.ConditionNumber = YES;
-    options.IterRefine = SINGLE;
+    options.IterRefine = SLU_SINGLE;
     
     if ( strcmp(matrix_type, "LA") == 0 ) {
 	/* Test LAPACK matrix suite. */

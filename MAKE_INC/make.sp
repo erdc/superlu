@@ -21,8 +21,8 @@ PLAT = _sp
 #
 #  The name of the libraries to be created/linked to
 #
-SuperLUroot	= $(HOME)/Codes/SuperLU_4.1
-SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu_4.1.a
+SuperLUroot	= $(HOME)/Codes/SuperLU_4.3
+SUPERLULIB   	= $(SuperLUroot)/lib/libsuperlu_4.3.a
 # 
 # If you don't have ESSL, you can use the following blaslib instead:
 #           BLASLIB = -lblas -lxlf -lxlf90
@@ -47,7 +47,7 @@ CFLAGS       = -O3 -qarch=pwr3 -qalias=allptrs
 NOOPTS       = 
 FORTRAN	     = xlf
 FFLAGS       = -O3 -qarch=pwr3
-LOADER       = xlf
+LOADER       = $(CC)
 LOADOPTS     = -bmaxdata:0x80000000
 #
 #  C preprocessor defs for compilation for the Fortran interface
