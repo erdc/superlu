@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*! @file clacon.c
  * \brief Estimates the 1-norm
@@ -79,15 +89,16 @@ clacon_(int *n, complex *v, complex *x, float *est, int *kase)
     float d__1;
     
     /* Local variables */
-    static int iter;
-    static int jump, jlast;
-    static float altsgn, estold;
-    static int i, j;
+    static int jump;
+    int jlast;
+     int iter;
+     float altsgn, estold;
+     int i, j;
     float temp;
     float safmin;
     extern float slamch_(char *);
-    extern int icmax1_(int *, complex *, int *);
-    extern double scsum1_(int *, complex *, int *);
+    extern int icmax1_slu(int *, complex *, int *);
+    extern double scsum1_slu(int *, complex *, int *);
 
     safmin = slamch_("Safe minimum");
     if ( *kase == 0 ) {
@@ -117,7 +128,7 @@ clacon_(int *n, complex *v, complex *x, float *est, int *kase)
 	/*        ... QUIT */
 	goto L150;
     }
-    *est = scsum1_(n, x, &c__1);
+    *est = scsum1_slu(n, x, &c__1);
 
     for (i = 0; i < *n; ++i) {
 	d__1 = c_abs(&x[i]);
@@ -136,7 +147,7 @@ clacon_(int *n, complex *v, complex *x, float *est, int *kase)
     /*     ................ ENTRY   (JUMP = 2)   
 	   FIRST ITERATION.  X HAS BEEN OVERWRITTEN BY TRANSPOSE(A)*X. */
 L40:
-    j = icmax1_(n, &x[0], &c__1);
+    j = icmax1_slu(n, &x[0], &c__1);
     --j;
     iter = 2;
 
@@ -157,7 +168,7 @@ L70:
     ccopy_(n, x, &c__1, v, &c__1);
 #endif
     estold = *est;
-    *est = scsum1_(n, v, &c__1);
+    *est = scsum1_slu(n, v, &c__1);
 
 
 L90:
@@ -182,7 +193,7 @@ L90:
 	   X HAS BEEN OVERWRITTEN BY TRANDPOSE(A)*X. */
 L110:
     jlast = j;
-    j = icmax1_(n, &x[0], &c__1);
+    j = icmax1_slu(n, &x[0], &c__1);
     --j;
     if (x[jlast].r != (d__1 = x[j].r, fabs(d__1)) && iter < 5) {
 	++iter;
@@ -204,7 +215,7 @@ L120:
     /*     ................ ENTRY   (JUMP = 5)   
 	   X HAS BEEN OVERWRITTEN BY A*X. */
 L140:
-    temp = scsum1_(n, x, &c__1) / (float)(*n * 3) * 2.;
+    temp = scsum1_slu(n, x, &c__1) / (float)(*n * 3) * 2.;
     if (temp > *est) {
 #ifdef _CRAY
 	CCOPY(n, &x[0], &c__1, &v[0], &c__1);

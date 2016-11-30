@@ -1,12 +1,22 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 /*! @file sp_ienv.c
- * \brief Chooses machine-dependent parameters for the local
- * environment.
+ * \brief Chooses machine-dependent parameters for the local environment.
  *
+ * <pre>
  * -- SuperLU routine (version 4.1) --
  * Univ. of California Berkeley, Xerox Palo Alto Research Center,
  * and Lawrence Berkeley National Lab.
  * November, 2010
- *
+ * </pre>
 */
 
 /*
@@ -61,18 +71,18 @@ sp_ienv(int ispec)
     int i;
 
     switch (ispec) {
-	case 1: return (12);
+	case 1: return (1);
 	case 2: return (1);
-	case 3: return (100);
+	case 3: return (200);
 	case 4: return (200);
-	case 5: return (60);
-        case 6: return (20);
+	case 5: return (100);
+        case 6: return (30);
         case 7: return (10);
     }
 
     /* Invalid value for ISPEC */
     i = 1;
-    xerbla_("sp_ienv", &i);
+    input_error("sp_ienv", &i);
     return 0;
 
 } /* sp_ienv_ */

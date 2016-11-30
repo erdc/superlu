@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*
  * -- SuperLU routine (version 3.0) --
@@ -83,7 +93,6 @@ int sgst02(trans_t trans, int m, int n, int nrhs, SuperMatrix *A,
     char transc[1];
 
     /* Function prototypes */
-    extern int lsame_(char *, char *);
     extern float slangs(char *, SuperMatrix *);
     extern float sasum_(int *, float *, int *);
     
@@ -104,8 +113,7 @@ int sgst02(trans_t trans, int m, int n, int nrhs, SuperMatrix *A,
     }
 
     /* Exit with RESID = 1/EPS if ANORM = 0. */
-
-    eps = slamch_("Epsilon");
+    eps = smach("Epsilon");
     anorm = slangs("1", A);
     if (anorm <= 0.) {
 	*resid = 1. / eps;

@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*! @file slacon.c
  * \brief Estimates the 1-norm
@@ -75,10 +85,11 @@ slacon_(int *n, float *v, float *x, int *isgn, float *est, int *kase)
     float      one = 1.0;
     
     /* Local variables */
-    static int iter;
-    static int jump, jlast;
-    static float altsgn, estold;
-    static int i, j;
+    static int jump;
+    int jlast;
+     int iter;
+     float altsgn, estold;
+     int i, j;
     float temp;
 #ifdef _CRAY
     extern int ISAMAX(int *, float *, int *);

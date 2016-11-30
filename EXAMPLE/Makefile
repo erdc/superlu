@@ -18,7 +18,7 @@ include ../make.inc
 #       make
 #  without any arguments creates all four example programs.
 #  The executable files are called
-#       slinsol		slinsolx
+#       slinsol		slinsolx 
 #       dlinsol		dlinsolx
 #       clinsol		clinsolx
 #       zlinsol		zlinsolx
@@ -39,6 +39,7 @@ SLINEXM1	= slinsol1.o
 SLINXEXM 	= slinsolx.o
 SLINXEXM1 	= slinsolx1.o
 SLINXEXM2	= slinsolx2.o
+SLINXEXM3	= slinsolx3.o
 SITSOL	     	= sitersol.o sfgmr.o
 SITSOL1	     	= sitersol1.o sfgmr.o
 
@@ -47,6 +48,7 @@ DLINEXM1	= dlinsol1.o
 DLINXEXM 	= dlinsolx.o
 DLINXEXM1 	= dlinsolx1.o
 DLINXEXM2 	= dlinsolx2.o
+DLINXEXM3 	= dlinsolx3.o
 SUPERLUEXM 	= superlu.o sp_ienv.o
 DITSOL	     	= ditersol.o dfgmr.o
 DITSOL1	     	= ditersol1.o dfgmr.o
@@ -56,6 +58,7 @@ CLINEXM1 	= clinsol1.o
 CLINXEXM 	= clinsolx.o
 CLINXEXM1 	= clinsolx1.o
 CLINXEXM2 	= clinsolx2.o
+CLINXEXM3 	= clinsolx3.o
 CITSOL	     	= citersol.o cfgmr.o
 CITSOL1	     	= citersol1.o cfgmr.o
 
@@ -64,17 +67,21 @@ ZLINEXM1 	= zlinsol1.o
 ZLINXEXM 	= zlinsolx.o
 ZLINXEXM1 	= zlinsolx1.o
 ZLINXEXM2 	= zlinsolx2.o
+ZLINXEXM3 	= zlinsolx3.o
 ZITSOL	     	= zitersol.o zfgmr.o
 ZITSOL1	     	= zitersol1.o zfgmr.o
 
 
 all:    single double complex complex16
 
-single:    slinsol slinsol1 slinsolx slinsolx1 slinsolx2 sitersol sitersol1
-double:    dlinsol dlinsol1 dlinsolx dlinsolx1 dlinsolx2 superlu \
-		ditersol ditersol1
-complex:   clinsol clinsol1 clinsolx clinsolx1 clinsolx2 citersol citersol1
-complex16: zlinsol zlinsol1 zlinsolx zlinsolx1 zlinsolx2 zitersol zitersol1
+single:    slinsol slinsol1 slinsolx slinsolx1 slinsolx2 slinsolx3 \
+		sitersol sitersol1
+double:    dlinsol dlinsol1 dlinsolx dlinsolx1 dlinsolx2 dlinsolx3 \
+		superlu ditersol ditersol1
+complex:   clinsol clinsol1 clinsolx clinsolx1 clinsolx2 clinsolx3 \
+		citersol citersol1
+complex16: zlinsol zlinsol1 zlinsolx zlinsolx1 zlinsolx2 zlinsolx3 \
+		zitersol zitersol1
 
 slinsol: $(SLINEXM) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(SLINEXM) $(LIBS) -lm -o $@
@@ -90,6 +97,9 @@ slinsolx1: $(SLINXEXM1) $(SUPERLULIB)
 
 slinsolx2: $(SLINXEXM2) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(SLINXEXM2) $(LIBS) -lm -o $@
+
+slinsolx3: $(SLINXEXM3) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(SLINXEXM3) $(LIBS) -lm -o $@
 
 sitersol: $(SITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(SITSOL) $(LIBS) -lm -o $@
@@ -111,6 +121,9 @@ dlinsolx1: $(DLINXEXM1) $(SUPERLULIB)
 
 dlinsolx2: $(DLINXEXM2) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(DLINXEXM2) $(LIBS) -lm -o $@
+
+dlinsolx3: $(DLINXEXM3) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(DLINXEXM3) $(LIBS) -lm -o $@
 
 superlu: $(SUPERLUEXM) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(SUPERLUEXM) $(LIBS) -lm -o $@
@@ -136,6 +149,9 @@ clinsolx1: $(CLINXEXM1) $(SUPERLULIB)
 clinsolx2: $(CLINXEXM2) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(CLINXEXM2) $(LIBS) -lm -o $@
 
+clinsolx3: $(CLINXEXM3) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(CLINXEXM3) $(LIBS) -lm -o $@
+
 citersol: $(CITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(CITSOL) $(LIBS) -lm -o $@
 
@@ -157,6 +173,9 @@ zlinsolx1: $(ZLINXEXM1) $(SUPERLULIB)
 zlinsolx2: $(ZLINXEXM2) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(ZLINXEXM2) $(LIBS) -lm -o $@
 
+zlinsolx3: $(ZLINXEXM3) $(SUPERLULIB)
+	$(LOADER) $(LOADOPTS) $(ZLINXEXM3) $(LIBS) -lm -o $@
+
 zitersol: $(ZITSOL) $(SUPERLULIB)
 	$(LOADER) $(LOADOPTS) $(ZITSOL) $(LIBS) -lm -o $@
 
@@ -170,8 +189,9 @@ zitersol1: $(ZITSOL1) $(SUPERLULIB)
 	$(FORTRAN) $(FFLAGS) -c $< $(VERBOSE)
 
 clean:	
-	rm -f *.o *linsol *linsol1 *linsolx *linsolx1 *linsolx2 \
-	    superlu *itersol
+	rm -f *.o *linsol *linsol1 *linsolx *linsolx1 *linsolx2 *linsolx3 \
+	    superlu *itersol *itersol1
+
 
 
 

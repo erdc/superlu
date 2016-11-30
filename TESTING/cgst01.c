@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*
  * -- SuperLU routine (version 2.0) --
@@ -82,8 +92,16 @@ int cgst01(int m, int n, SuperMatrix *A, SuperMatrix *L,
     Ustore = U->Store;
     Uval = Ustore->nzval;
 
+    colbeg = intMalloc(n);
+    colend = intMalloc(n);
+
+        for (i = 0; i < n; i++) {
+            colbeg[perm_c[i]] = Astore->colptr[i]; 
+	    colend[perm_c[i]] = Astore->colptr[i+1];
+        }
+	
     /* Determine EPS and the norm of A. */
-    eps = slamch_("Epsilon");
+    eps = smach("Epsilon");
     anorm = clangs("1", A);
     cnorm = 0.;
 
@@ -128,13 +146,6 @@ int cgst01(int m, int n, SuperMatrix *A, SuperMatrix *L,
 
 	/* Now compute A[k] - (L*U)[k] (Both matrices may be permuted.) */
 
-	colbeg = intMalloc(n);
-	colend = intMalloc(n);
-	for (i = 0; i < n; i++) {
-	    colbeg[perm_c[i]] = Astore->colptr[i]; 
-	    colend[perm_c[i]] = Astore->colptr[i+1];
-	}
-	
 	for (i = colbeg[k]; i < colend[k]; ++i) {
 	    arow = Astore->rowind[i];
 	    work[perm_r[arow]].r += Aval[i].r;

@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*
  * -- SuperLU routine (version 3.0) --
@@ -24,7 +34,7 @@
 static void
 parse_command_line(int argc, char *argv[], char *matrix_type,
 		   int *n, int *w, int *relax, int *nrhs, int *maxsuper,
-		   int *rowblk, int *colblk, int *lwork, double *u);
+		   int *rowblk, int *colblk, int *lwork, double *u, FILE **fp);
 
 main(int argc, char *argv[])
 {
@@ -45,6 +55,7 @@ main(int argc, char *argv[])
     int            *xa, *xa_save;
     SuperMatrix  A, B, X, L, U;
     SuperMatrix  ASAV, AC;
+    GlobalLU_t   Glu; /* Not needed on return. */
     mem_usage_t    mem_usage;
     int            *perm_r; /* row permutation from partial pivoting */
     int            *perm_c, *pc_save; /* column permutation */
@@ -79,6 +90,7 @@ main(int argc, char *argv[])
     SuperLUStat_t  stat;
     static char    matrix_type[8];
     static char    equed[1], path[4], sym[1], dist[1];
+    FILE           *fp;
 
     /* Fixed set of parameters */
     int            iseed[]  = {1988, 1989, 1990, 1991};
@@ -97,9 +109,9 @@ main(int argc, char *argv[])
     extern int cgst07(trans_t, int, int, SuperMatrix *, complex *, int,
                          complex *, int, complex *, int, 
                          float *, float *, float *);
-    extern int clatb4_(char *, int *, int *, int *, char *, int *, int *, 
+    extern int clatb4_slu(char *, int *, int *, int *, char *, int *, int *, 
 	               float *, int *, float *, char *);
-    extern int clatms_(int *, int *, char *, int *, char *, float *d,
+    extern int clatms_slu(int *, int *, char *, int *, char *, float *d,
                        int *, float *, float *, int *, int *,
                        char *, complex *, int *, complex *, int *);
     extern int sp_cconvert(int, int, complex *, int, int, int,
@@ -123,7 +135,7 @@ main(int argc, char *argv[])
     strcpy(matrix_type, "LA");
     parse_command_line(argc, argv, matrix_type, &n,
 		       &panel_size, &relax, &nrhs, &maxsuper,
-		       &rowblk, &colblk, &lwork, &u);
+		       &rowblk, &colblk, &lwork, &u, &fp);
     if ( lwork > 0 ) {
 	work = SUPERLU_MALLOC(lwork);
 	if ( !work ) {
@@ -152,7 +164,7 @@ main(int argc, char *argv[])
     } else {
 	/* Read a sparse matrix */
 	fimat = nimat = 0;
-	creadhb(&m, &n, &nnz, &a, &asub, &xa);
+	creadhb(fp, &m, &n, &nnz, &a, &asub, &xa);
     }
 
     callocateA(n, nnz, &a_save, &asub_save, &xa_save);
@@ -196,10 +208,10 @@ main(int argc, char *argv[])
 	    
 	    /* Set up parameters with CLATB4 and generate a test matrix
 	       with CLATMS.  */
-	    clatb4_(path, &imat, &n, &n, sym, &kl, &ku, &anorm, &mode,
+	    clatb4_slu(path, &imat, &n, &n, sym, &kl, &ku, &anorm, &mode,
 		    &cndnum, dist);
 
-	    clatms_(&n, &n, dist, iseed, sym, &rwork[0], &mode, &cndnum,
+	    clatms_slu(&n, &n, dist, iseed, sym, &rwork[0], &mode, &cndnum,
 		    &anorm, &kl, &ku, "No packing", Afull, &lda,
 		    &wwork[0], &info);
 
@@ -275,13 +287,13 @@ main(int argc, char *argv[])
 
 			    /* Force equilibration. */
 			    if ( !info && n > 0 ) {
-				if ( lsame_(equed, "R") ) {
+				if ( strncmp(equed, "R", 1)==0 ) {
 				    rowcnd = 0.;
 				    colcnd = 1.;
-				} else if ( lsame_(equed, "C") ) {
+				} else if ( strncmp(equed, "C", 1)==0 ) {
 				    rowcnd = 1.;
 				    colcnd = 0.;
-				} else if ( lsame_(equed, "B") ) {
+				} else if ( strncmp(equed, "B", 1)==0 ) {
 				    rowcnd = 0.;
 				    colcnd = 0.;
 				}
@@ -304,7 +316,7 @@ main(int argc, char *argv[])
 			/* Factor the matrix AC. */
 			cgstrf(&options, &AC, relax, panel_size,
                                etree, work, lwork, perm_c, perm_r, &L, &U,
-                               &stat, &info);
+                               &Glu, &stat, &info);
 
 			if ( info ) { 
                             printf("** First factor: info %d, equed %c\n",
@@ -398,7 +410,8 @@ main(int argc, char *argv[])
 			   and error bounds using cgssvx.      */
 			cgssvx(&options, &A, perm_c, perm_r, etree,
                                equed, R, C, &L, &U, work, lwork, &B, &X, &rpg,
-                               &rcond, ferr, berr, &mem_usage, &stat, &info);
+                               &rcond, ferr, berr, &Glu,
+			       &mem_usage, &stat, &info);
 
 			if ( info && info != izero ) {
 			    printf(FMT3, "cgssvx",
@@ -465,13 +478,17 @@ main(int argc, char *argv[])
     if ( !info ) {
 	PrintPerf(&L, &U, &mem_usage, rpg, rcond, ferr, berr, equed);
     }
-#endif    
+#endif
+        Destroy_SuperMatrix_Store(&A);
+        Destroy_SuperMatrix_Store(&ASAV);
+        StatFree(&stat);
 
     } /* for imat ... */
 
     /* Print a summary of the results. */
     PrintSumm("CGE", nfail, nrun, nerrs);
 
+    if ( strcmp(matrix_type, "LA") == 0 ) SUPERLU_FREE (Afull);
     SUPERLU_FREE (rhsb);
     SUPERLU_FREE (bsav);
     SUPERLU_FREE (solx);    
@@ -488,14 +505,18 @@ main(int argc, char *argv[])
     SUPERLU_FREE (wwork);
     Destroy_SuperMatrix_Store(&B);
     Destroy_SuperMatrix_Store(&X);
+#if 0
     Destroy_CompCol_Matrix(&A);
     Destroy_CompCol_Matrix(&ASAV);
+#else
+    SUPERLU_FREE(a); SUPERLU_FREE(asub); SUPERLU_FREE(xa);
+    SUPERLU_FREE(a_save); SUPERLU_FREE(asub_save); SUPERLU_FREE(xa_save);
+#endif
     if ( lwork > 0 ) {
 	SUPERLU_FREE (work);
 	Destroy_SuperMatrix_Store(&L);
 	Destroy_SuperMatrix_Store(&U);
     }
-    StatFree(&stat);
 
     return 0;
 }
@@ -506,12 +527,12 @@ main(int argc, char *argv[])
 static void
 parse_command_line(int argc, char *argv[], char *matrix_type,
 		   int *n, int *w, int *relax, int *nrhs, int *maxsuper,
-		   int *rowblk, int *colblk, int *lwork, double *u)
+		   int *rowblk, int *colblk, int *lwork, double *u, FILE **fp)
 {
     int c;
     extern char *optarg;
 
-    while ( (c = getopt(argc, argv, "ht:n:w:r:s:m:b:c:l:")) != EOF ) {
+    while ( (c = getopt(argc, argv, "ht:n:w:r:s:m:b:c:l:u:f:")) != EOF ) {
 	switch (c) {
 	  case 'h':
 	    printf("Options:\n");
@@ -539,6 +560,12 @@ parse_command_line(int argc, char *argv[], char *matrix_type,
 	            break;
 	  case 'u': *u = atof(optarg); 
 	            break;
+          case 'f':
+                    if ( !(*fp = fopen(optarg, "r")) ) {
+                        ABORT("File does not exist");
+                    }
+                    printf(".. test sparse matrix in file: %s\n", optarg);
+                    break;
   	}
     }
 }

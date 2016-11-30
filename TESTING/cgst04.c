@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*
  * -- SuperLU routine (version 2.0) --
@@ -78,8 +88,7 @@ int cgst04(int n, int nrhs, complex *x, int ldx, complex *xact,
     }
 
     /* Exit with RESID = 1/EPS if RCOND is invalid. */
-
-    eps = slamch_("Epsilon");
+    eps = smach("Epsilon");
     if ( rcond < 0. ) {
 	*resid = 1. / eps;
 	return 0;

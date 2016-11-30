@@ -1,9 +1,19 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*! @file citersol.c
  * \brief Example #1 showing how to use ILU to precondition GMRES
  *
  * <pre>
- * -- SuperLU routine (version 4.2) --
+ * -- SuperLU routine (version 5.0) --
  * Lawrence Berkeley National Laboratory
  * November, 2010
  * August, 2011
@@ -16,7 +26,7 @@
  * Note that CGSISX performs the following factorization:
  *     Pr*Dr*A*Dc*Pc^T ~= LU
  * with Pr being obtained from MC64 statically then partial pivoting
- * dybamically. On return, A is overwritten as A1 = Dr*A*Dc.
+ * dynamically. On return, A is overwritten as A1 = Dr*A*Dc.
  *
  * We can solve the transformed system, A1*y = Dr*B, using FGMRES.
  * B is first overwritten as Dr*B.
@@ -64,7 +74,8 @@ void cpsolve(int n,
     cgstrs(NOTRANS, L, U, perm_c, perm_r, &XX, stat, &info);
 #else
     cgsisx(options, A, perm_c, perm_r, NULL, equed, R, C,
-	   L, U, NULL, 0, &YY, &XX, &rpg, &rcond, mem_usage, stat, &info);
+	   L, U, NULL, 0, &YY, &XX, &rpg, &rcond, NULL,
+	   mem_usage, stat, &info);
 #endif
 }
 
@@ -94,6 +105,8 @@ int main(int argc, char *argv[])
     NCformat *Astore;
     NCformat *Ustore;
     SCformat *Lstore;
+    GlobalLU_t	   Glu; /* facilitate multiple factorizations with 
+                           SamePattern_SameRowPerm                  */
     complex   *a;
     int      *asub, *xa;
     int      *etree;
@@ -110,6 +123,7 @@ int main(int argc, char *argv[])
     mem_usage_t   mem_usage;
     superlu_options_t options;
     SuperLUStat_t stat;
+    FILE 	  *fp = stdin;
 
     int restrt, iter, maxit, i;
     double resid;
@@ -175,7 +189,7 @@ int main(int argc, char *argv[])
 	    case 'H':
 	    case 'h':
 		printf("Input a Harwell-Boeing format matrix:\n");
-		creadhb(&m, &n, &nnz, &a, &asub, &xa);
+		creadhb(fp, &m, &n, &nnz, &a, &asub, &xa);
 		break;
 	    case 'R':
 	    case 'r':
@@ -231,7 +245,7 @@ int main(int argc, char *argv[])
        and pivot growth using dgsisx. */
     B.ncol = 0;  /* not to perform triangular solution */
     cgsisx(&options, &A, perm_c, perm_r, etree, equed, R, C, &L, &U, work,
-	   lwork, &B, &X, &rpg, &rcond, &mem_usage, &stat, &info);
+	   lwork, &B, &X, &rpg, &rcond, &Glu, &mem_usage, &stat, &info);
 
     /* Set RHS for GMRES. */
     if (!(b = complexMalloc(m))) ABORT("Malloc fails for b[].");
@@ -288,7 +302,7 @@ int main(int argc, char *argv[])
     restrt = SUPERLU_MIN(n / 3 + 1, 50);
     maxit = 1000;
     iter = maxit;
-    resid = 1e-8;
+    resid = 1e-4;
     if (!(x = complexMalloc(n))) ABORT("Malloc fails for x[].");
 
     if (info <= n + 1)

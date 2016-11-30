@@ -40,7 +40,7 @@ foreach m ($MATRICES)
         foreach l ($LWORK)
 	    echo '' >> $ofile
             echo 'nrhs='$s 'lwork='$l >> $ofile
-            ./stest -t "SP" -s $s -l $l < ../EXAMPLE/$m >> $ofile
+            ./stest -t "SP" -s $s -l $l -f ../EXAMPLE/$m >> $ofile
         end
     end
   endif

@@ -1,3 +1,13 @@
+/*! \file
+Copyright (c) 2003, The Regents of the University of California, through
+Lawrence Berkeley National Laboratory (subject to receipt of any required 
+approvals from U.S. Dept. of Energy) 
+
+All rights reserved. 
+
+The source code is distributed under BSD license, see the file License.txt
+at the top-level directory.
+*/
 
 /*
  * -- SuperLU routine (version 3.0) --
@@ -110,7 +120,6 @@ int dgst07(trans_t trans, int n, int nrhs, SuperMatrix *A, double *b,
     NCformat *Astore;
 
     /* Function prototypes */
-    extern int    lsame_(char *, char *);
     extern int    idamax_(int *, double *, int *);
 
 
@@ -121,8 +130,8 @@ int dgst07(trans_t trans, int n, int nrhs, SuperMatrix *A, double *b,
 	return 0;
     }
 
-    eps = dlamch_("Epsilon");
-    unfl = dlamch_("Safe minimum");
+    eps = dmach("Epsilon");
+    unfl = dmach("Safe minimum");
     ovfl   = 1. / unfl;
     notran = (trans == NOTRANS);
 
